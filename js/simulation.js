@@ -2521,6 +2521,16 @@ const simulation = {
         });
         document.getElementById("construct").innerHTML = outHTML
     },
+    //MakeFireDelay0(){
+        //window.addEventListener('keydown', (v) => {
+           // if (z.key.toLowerCase() === 'v') {
+           //     b.fireCD = 0;
+           //     b.fireCycle = 0; 
+          //  }
+       // });
+   // },
+
+
     // copyToClipBoard(value) {
     //     // Create a fake textarea
     //     const textAreaEle = document.createElement('textarea');

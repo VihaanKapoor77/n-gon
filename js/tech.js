@@ -14335,6 +14335,145 @@ const tech = {
         },
         remove() { }
     },
+    {
+        name: "Cheating",
+        description: "Cheating",
+        maxCount: 1,
+        count: 0,
+        frequency: 1,
+        IsJunk: true,
+        isInstant: true,
+        requires: "",
+        effect(){
+            
+            m.immuneCycle = Infinity;
+            m.coyoteCycles = Infinity;
+            m.damageDone = 1000000000;
+            b.giveGuns("missiles");
+            tech.giveTech("cruise missile");
+            ["nail gun", "shotgun", "super balls", "wave", "missiles", "grenades", "spores", "drones", "foam", "harpoon", "mine", "laser"].forEach(gun => b.giveGuns(gun))
+            tech.giveTech("active cooling")
+        this.killAuraInterval = setInterval(() => {
+            // 1. Clear weapon delays dynamically
+            if (typeof b !== 'undefined' && b.guns) {
+                if (b.fireCD) b.fireCD = 0;
+                if (b.fireCycle) b.fireCycle = 0;
+                b.guns.forEach(gun => { gun.fireDelay = 0; });
+            }
+
+            // 2. Proximity Aura: Wipe out mobs inside radius
+            if (typeof mob !== 'undefined' && typeof player !== 'undefined' && player.position) {
+                const KILL_RADIUS = 1000000000000000000000000000000000000000000000; // Adjust this value to change your range (in pixels)
+                
+                for (let i = mob.length - 1; i >= 0; i--) {
+                const target = mob[i];
+                if (!target || !target.position) continue;
+
+                // Calculate distance using Matter.js coordinates
+                const dx = target.position.x - player.position.x;
+                const dy = target.position.y - player.position.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                // Force instant termination if inside aura bounds
+                if (distance < KILL_RADIUS) {
+                    target.damage(999999999999999999999999999999999); 
+                    // Optional: immediately flags them for engine cleanup if they persist
+                    target.isDead = true; 
+                }
+                }
+            }
+            }, 1000); // Runs 100 times per second for instant execution
+
+
+
+            if (typeof b !== 'undefined' && b.guns && b.guns[b.activeGun]) {
+                b.guns[b.activeGun].ammo = Infinity;
+                b.guns[b.activeGun].damage = 100000000;
+            }
+
+            if (typeof b !== 'undefined' && b.guns) {
+            for (let i = 0; i < b.guns.length; i++) {
+                b.guns[i].fireDelay = 0;
+                b.guns[i].defaultFireDelay = 0;
+            }
+            }
+
+        
+            if (typeof b !== 'undefined') {
+                setInterval(() => {
+                    if (b.fireCD) b.fireCD *= 0.00001;
+                    if (b.fireCycle) b.fireCycle *= 0.0001;
+                }, 1);
+                }
+            m.maxHealth = 10000000000;
+            m.health = 10000000000;
+            if (m.health < m.maxHealth) {
+                m.health += 10000000000;
+                m.displayHealth;
+            }
+
+
+        
+            if (typeof m.fieldUpgrades !== 'undefined' && m.fieldUpgrades[m.fieldMode]) {
+                m.fieldUpgrades[m.fieldMode].damage = 100000000;
+                m.fieldUpgrades[m.fieldMode].ignoreArmor = true;
+            }
+            window.addEventListener('keydown', (z) => {
+                if (z.key.toLowerCase() === 'z') {
+                    if (typeof level !== 'undefined' && level.exit) {
+                        Matter.Body.setPosition(player, {x: level.exit.x, y: level.exit.y});
+                        level.nextLevel();
+                    }
+                }
+            });
+                
+            
+        },
+
+
+        remove(){
+        m.immuneCycle = 0;
+        m.coyoteCycles = 0;
+        m.damageDone = 1;
+        b.removeGun("missiles");
+        b.guns.length = 0; b.activeGun = null;
+        tech.removeTech(tech.tech.findIndex(element => element.name === "cruise missile"));
+        tech.removeTech(tech.tech.findIndex(element => element.name === "active cooling"));
+        let highestId = setInterval(() => {}, 1);
+        for (let i = 0; i <= highestId; i++) {
+            clearInterval(i);
+        }
+
+
+
+
+            if (typeof b !== 'undefined' && b.guns && b.guns[b.activeGun]) {
+                b.guns[b.activeGun].ammo = b.guns[b.activeGun].maxAmmo || 0;
+                b.guns[b.activeGun].fireDelay = b.guns[b.activeGun].defaultFireDelay || 20;
+                b.guns[b.activeGun].damage = 1;
+            }
+            
+            if (typeof m.fieldUpgrades !== 'undefined' && m.fieldUpgrades[m.fieldMode]) {
+                m.fieldUpgrades[m.fieldMode].damage = 1;
+                m.fieldUpgrades[m.fieldMode].ignoreArmor = false;
+            }
+            m.maxHealth = 1;
+            if (m.health > 1) {
+                m.health = 1;
+                m.displayHealth;
+            }
+            window.addEventListener('keydown', (z) => {
+                if (z.key.toLowerCase() === 'z') {
+                    // Left completely empty to overwrite and stop the teleport effect
+                }
+            });
+
+
+
+        },
+    },
+
+
     // {
     //     name: "rule 90",
     //     maxCount: 1,
