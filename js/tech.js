@@ -14404,6 +14404,145 @@ const tech = {
     //************************************************** undefined / lore
     //************************************************** tech
     //************************************************** 
+
+    {
+        name: "Cheating",
+        description: "Cheating",
+        maxCount: 1,
+        count: 0,
+        frequency: 1,
+        IsJunk: true,
+        isInstant: true,
+        requires: "",
+        
+
+        killAuraInterval: null,
+        cooldownInterval: null,
+        teleportHandler: null,
+
+        effect() {
+
+            m.immuneCycle = Infinity;
+            m.coyoteCycles = Infinity;
+            m.damageDone = 1000000000;
+            m.maxHealth = 10000000000;
+            m.health = 10000000000;
+            if (typeof m.displayHealth === 'function') m.displayHealth();
+
+ 
+            if (typeof b !== 'undefined') {
+            b.giveGuns("missiles");
+            b.giveGuns("all");
+            const gunList = ["nail gun", "shotgun", "super balls", "wave", "missiles", "grenades", "spores", "drones", "foam", "harpoon", "mine", "laser"];
+            gunList.forEach(gun => b.giveGuns(gun));
+            }
+            if (typeof tech !== 'undefined') {
+            tech.giveTech("cruise missile");
+            tech.giveTech("active cooling");
+            }
+
+
+            if (typeof m.fieldUpgrades !== 'undefined' && m.fieldUpgrades[m.fieldMode]) {
+                m.fieldUpgrades[m.fieldMode].damage = 100000000000000000000;
+                m.fieldUpgrades[m.fieldMode].ignoreArmor = true;
+            }
+
+      
+            this.killAuraInterval = setInterval(() => {
+            if (typeof b !== 'undefined' && b.guns) {
+                if (b.fireCD) b.fireCD = 0;
+                if (b.fireCycle) b.fireCycle = 0;
+                b.guns.forEach(gun => { gun.fireDelay = 0; });
+                
+                if (b.guns[b.activeGun]) {
+                b.guns[b.activeGun].ammo = Infinity;
+                b.guns[b.activeGun].damage = 100000000000;
+                }
+            }
+
+
+            if (typeof mob !== 'undefined' && typeof player !== 'undefined' && player.position) {
+                const KILL_RADIUS = 5000000; // Screen-wide containment radius
+                for (let i = mob.length - 1; i >= 0; i--) {
+                const target = mob[i];
+                if (!target || !target.position) continue;
+
+                const dx = target.position.x - player.position.x;
+                const dy = target.position.y - player.position.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < KILL_RADIUS) {
+                    m.fieldUpgrades[m.fieldMode].ignoreArmor = true;
+                    target.damage(999999999999999);
+                    target.isDead = true;
+                }
+                }
+            }
+            }, 10);
+
+ 
+            this.cooldownInterval = setInterval(() => {
+            if (typeof b !== 'undefined') {
+                if (b.fireCD) b.fireCD *= 0.00001;
+                if (b.fireCycle) b.fireCycle *= 0.0001;
+            }
+            }, 1);
+
+   
+            this.teleportHandler = (z) => {
+            if (z.key.toLowerCase() === 'z') {
+                if (typeof level !== 'undefined' && level.exit && typeof player !== 'undefined') {
+                if (typeof Matter !== 'undefined' && Matter.Body) {
+                    Matter.Body.setPosition(player, { x: level.exit.x, y: level.exit.y });
+                }
+                level.nextLevel();
+                }
+            }
+            };
+            window.addEventListener('keydown', this.teleportHandler);
+        },
+
+        remove() {
+    
+            if (this.killAuraInterval) clearInterval(this.killAuraInterval);
+            if (this.cooldownInterval) clearInterval(this.cooldownInterval);
+            if (this.teleportHandler) window.removeEventListener('keydown', this.teleportHandler);
+
+
+            m.immuneCycle = 0;
+            m.coyoteCycles = 0;
+            m.damageDone = 1;
+            m.maxHealth = 100; 
+            m.health = 100;
+            if (typeof m.displayHealth === 'function') m.displayHealth();
+
+    
+            if (typeof tech !== 'undefined' && tech.tech) {
+            const cmIndex = tech.tech.findIndex(e => e.name === "cruise missile");
+            if (cmIndex !== -1) tech.removeTech(cmIndex);
+            
+            const acIndex = tech.tech.findIndex(e => e.name === "active cooling");
+            if (acIndex !== -1) tech.removeTech(acIndex);
+            }
+
+            if (typeof b !== 'undefined' && b.guns) {
+            if (b.guns[b.activeGun]) {
+                b.guns[b.activeGun].ammo = b.guns[b.activeGun].maxAmmo || 10;
+                b.guns[b.activeGun].damage = 1;
+            }
+            b.guns.forEach(gun => {
+                gun.fireDelay = gun.defaultFireDelay || 20;
+            });
+            }
+
+            if (typeof m.fieldUpgrades !== 'undefined' && m.fieldUpgrades[m.fieldMode]) {
+            m.fieldUpgrades[m.fieldMode].damage = 1;
+            m.fieldUpgrades[m.fieldMode].ignoreArmor = false;
+            }
+        }
+    },
+
+
     {
         name: `undefined`,
         description: `<strong class="lore-text">this</strong><br> &nbsp;`,
