@@ -14428,7 +14428,12 @@ const tech = {
             m.maxEnergy = Infinity; 
             m.fieldUpgrades[0].ignoreArmor = true; 
             m.fieldUpgrades[1].ignoreArmor = true; 
-            m.fieldUpgrades[2].ignoreArmor = true; 
+            m.fieldUpgrades[2].ignoreArmor = true;
+            tech.fastTimeFire *= 0.00000001
+            tech.fastTime += 0.000001
+            tech.fastTimeJump += 0.000001
+            m.setMovement();
+            b.setFireCD();
             fireRate = Infinity; 
             if (typeof m.displayHealth === 'function') m.displayHealth(); 
             if (typeof b !== 'undefined') { 
@@ -14485,7 +14490,7 @@ const tech = {
                     }; 
                 } 
             }; 
-           // window.addEventListener('keydown', this.gTeleportHandler); 
+            window.addEventListener('keydown', this.gTeleportHandler); 
             this.cooldownInterval = setInterval(() => { 
                 if (typeof b !== 'undefined') { 
                     if (b.fireCD) b.fireCD *= 0.00000001; 
@@ -14519,6 +14524,11 @@ const tech = {
             m.fieldUpgrades[0].ignoreArmor = false; 
             m.fieldUpgrades[1].ignoreArmor = false; 
             m.fieldUpgrades[2].ignoreArmor = false; 
+            tech.fastTimeFire *= 1
+            tech.fastTime += 1
+            tech.fastTimeJump += 1
+            m.setMovement();
+            b.setFireCD();
             fireRate = 1; 
             if (typeof m.displayHealth === 'function') m.displayHealth(); 
             if (typeof tech !== 'undefined' && tech.tech) { 
